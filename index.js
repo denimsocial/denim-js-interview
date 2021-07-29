@@ -11,11 +11,32 @@
 
 export function findHighestFreq(inputArr) {
 
-  /*<YOUR CODE HERE>*/
+  const freqMap = inputArr.reduce((acc, curr) => {
+    acc[curr] = (acc[curr] || 0) + 1;
+    return acc;
 
+  }, {});
+
+  // filter through the map to see if they are all the same
+  const sortedFreqMapValues = Object.values(freqMap).sort((a,b) => a - b)
+  if([...new Set(sortedFreqMapValues)].length <= 1){
+    return null
+  }
+  const maxFreq = Object.keys(freqMap).reduce((prev, curr) => {
+    let retValue;
+    if(freqMap[curr] > freqMap[prev]) {
+      retValue = curr
+    } else {
+      retValue = prev
+    }
+    if(/^-?\d+$/.test(String(retValue))) {
+      retValue = parseInt(retValue);
+    }
+    return retValue;
+  })
+
+  return maxFreq
 }
-
-
 
 
 //  2. Get Property Array (getPropArr)
@@ -33,10 +54,12 @@ export function findHighestFreq(inputArr) {
 //  Note: if <objects> is undefined, return 'null'
 
 export function getPropArr(objects, field) {
-
-  /*<YOUR CODE HERE>*/
-
+  if(!objects) {
+    return null
+  }
+  return objects.map(obj => obj[field] || null)
 }
+
 
 
 
@@ -66,9 +89,24 @@ export function getPropArr(objects, field) {
 //    email (string / alphabetically)
 //    groups (count / numerically)
 //    age (number / numerically)
+export const sortObjArr = (arr, prop, order) => {
 
-export function sortObjArr(objects, field, order) {
-
-  /*<YOUR CODE HERE>*/
-
-}
+  if(['firstName','lastName','email'].includes(prop)){
+    if(order === 'asc'){
+      return arr.sort((a, b) => a[prop].localeCompare(b[prop]))
+    }
+    return arr.sort((a, b) => b[prop].localeCompare(a[prop]))
+  }
+  else if(prop === "age"){
+    if(order === 'asc'){
+      return arr.sort((a, b) => a[prop] - b[prop])
+    }
+    return arr.sort((a, b) => b[prop] - a[prop])
+    }
+    else if(prop === "groups"){
+      if(order === 'asc'){
+        return arr.sort((a, b) => a[prop].length - b[prop].length)
+      }
+      return arr.sort((a, b) => b[prop].length - a[prop].length)
+    }
+  }
